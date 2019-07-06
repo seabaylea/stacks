@@ -12,6 +12,7 @@ WORKDIR /project/
 
 RUN mkdir -p /mvn/repository
 RUN mvn -Dmaven.repo.local=/mvn/repository install dependency:go-offline -DskipTests
+RUN mvn -Dmaven.repo.local=/mvn/repository install dependency:go-offline -DskipTests -f pom-dev.xml
 
 WORKDIR /project/user-app
 
@@ -22,17 +23,17 @@ ENV APPSODY_DEPS=/mvn/repository
 # ENV APPSODY_WATCH_IGNORE_DIR=
 # ENV APPSODY_WATCH_REGEX=""
 
-ENV APPSODY_INSTALL="mvn -Dmaven.repo.local=/mvn/repository install -DskipTests"
+ENV APPSODY_INSTALL="mvn -Dmaven.repo.local=/mvn/repository install -DskipTests && /project/install-dev-deps.sh"
 
-ENV APPSODY_RUN="../enforce.sh && mvn -Dmaven.repo.local=/mvn/repository liberty:run"
-ENV APPSODY_RUN_ON_CHANGE="mvn -Dmaven.repo.local=/mvn/repository compile"
+ENV APPSODY_RUN="../enforce.sh && JVM_ARGS='-javaagent:resources/javametrics-agent.jar' mvn -Dmaven.repo.local=/mvn/repository liberty:run"
+ENV APPSODY_RUN_ON_CHANGE="JVM_ARGS='-javaagent:resources/javametrics-agent.jar' mvn -Dmaven.repo.local=/mvn/repository compile"
 ENV APPSODY_RUN_KILL=false
 
-ENV APPSODY_DEBUG="../enforce.sh && mvn -Dmaven.repo.local=/mvn/repository liberty:debug"
-ENV APPSODY_DEBUG_ON_CHANGE="mvn -Dmaven.repo.local=/mvn/repository compile"
+ENV APPSODY_DEBUG="../enforce.sh && JVM_ARGS='-javaagent:resources/javametrics-agent.jar' mvn -Dmaven.repo.local=/mvn/repository liberty:debug"
+ENV APPSODY_DEBUG_ON_CHANGE="JVM_ARGS='-javaagent:resources/javametrics-agent.jar' mvn -Dmaven.repo.local=/mvn/repository compile"
 ENV APPSODY_DEBUG_KILL=false
 
-ENV APPSODY_TEST="../enforce.sh && mvn -Dmaven.repo.local=/mvn/repository verify"
+ENV APPSODY_TEST="../enforce.sh && JVM_ARGS='-javaagent:resources/javametrics-agent.jar' mvn -Dmaven.repo.local=/mvn/repository verify"
 ENV APPSODY_TEST_ON_CHANGE=""
 ENV APPSODY_TEST_KILL=false
 
