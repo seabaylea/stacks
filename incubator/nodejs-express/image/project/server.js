@@ -6,6 +6,7 @@ const express = require('express');
 const health = require('@cloudnative/health-connect');
 const fs = require('fs');
 
+// comment
 require('appmetrics-prometheus').attach();
 
 const app = express();
