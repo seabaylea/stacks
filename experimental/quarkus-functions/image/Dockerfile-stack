@@ -1,0 +1,32 @@
+# Dockerfile for building the stack
+FROM quay.io/quarkus/centos-quarkus-maven:19.0.2
+
+COPY ./project /project
+WORKDIR /project
+
+USER root
+RUN mkdir -p /mvn/repository
+RUN mvn -Dmaven.repo.local=/mvn/repository install dependency:go-offline -DskipTests
+
+ENV APPSODY_MOUNTS=/src/main/java:/project/user-app/src/main/java;/src/test/java:/project/user-app/src/test/java;/pom.xml:/project/user-app/pom.xml
+ENV APPSODY_DEPS=/mvn/repository
+
+ENV APPSODY_RUN="/project/mvnw -Dmaven.repo.local=/mvn/repository compile quarkus:dev"
+ENV APPSODY_RUN_ON_CHANGE=""
+ENV APPSODY_RUN_KILL=false
+
+ENV APPSODY_DEBUG="/project/mvnw -Dmaven.repo.local=/mvn/repository -Dmaven.compiler.debug=true -Djvm-args='-Xdebug -Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=y' -Dmaven.compiler.optimize=false compile quarkus:dev"
+ENV APPSODY_DEBUG_ON_CHANGE=""
+ENV APPSODY_DEBUG_KILL=false
+
+ENV APPSODY_TEST="/project/mvnw -Dmaven.repo.local=/mvn/repository test"
+ENV APPSODY_TEST_ON_CHANGE="/project/mvnw -Dmaven.repo.local=/mvn/repository test"
+ENV APPSODY_TEST_KILL=true
+
+WORKDIR /project/user-app
+
+ENV PORT=8080
+
+EXPOSE 8080
+EXPOSE 5005
+

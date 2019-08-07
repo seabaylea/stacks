@@ -1,0 +1,2 @@
+# config file for application development
+stack: appsody/quarkus-functions:0.0.1
