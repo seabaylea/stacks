@@ -6,7 +6,7 @@ WORKDIR /project
 
 USER root
 RUN mkdir -p /mvn/repository
-RUN mvn -Dmaven.repo.local=/mvn/repository install dependency:go-offline -DskipTests
+# RUN mvn -Dmaven.repo.local=/mvn/repository install dependency:go-offline -DskipTests
 
 ENV APPSODY_MOUNTS=/src/main/java:/project/user-app/src/main/java;/src/test/java:/project/user-app/src/test/java;/pom.xml:/project/user-app/pom.xml
 ENV APPSODY_DEPS=/mvn/repository
